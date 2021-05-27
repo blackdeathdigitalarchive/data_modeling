@@ -1,0 +1,85 @@
+* Places Table Data Dictionary
+** Title
+   #+begin_quote
+   The name of the place mentioned in the document, as it is mentioned in the document.
+   #+end_quote
+
+   - E48 Place Name ::
+     http://www.cidoc-crm.org/html/5.0.4/cidoc-crm.html#E48
+     The ususal entry in place-name gazetteers.
+
+   - E44 Place Appellation ::
+     http://www.cidoc-crm.org/html/5.0.4/cidoc-crm.html#E44
+     A more general form of place name; it also subsumes E47 Spatial Coordinates.
+
+** Variants
+   #+begin_quote
+   Includes variants of the name of the place mentioned in the title
+   field including modern variants and variants in several languages.
+   #+end_quote
+
+   These are either distinct _E48 Place Names_, or they are spelling
+   variants.  If the latter, they should be modeled with SKOS.
+
+** Aat_types
+   #+begin_quote
+   The Getty Art and Architecture Thesaurus
+   (https://www.getty.edu/research/tools/vocabularies/aat/help.html)
+   This table uses the hierarchy list from Linked Pasts:
+   https://github.com/LinkedPasts/linked-places/blob/master/tsv_0.2.md
+   #+end_quote
+
+   Not a property of the name, but of the _E53 Place_ to which it refers
+   - _P2 has type_ _E55 Type_
+     #+begin_src n3
+	bdda:placexx :P2_has_type <URI of AAT type>
+     #+end_src
+
+** Title_source
+   #+begin_quote
+   Secondary source reference about the place mentioned in the title
+   field.
+   #+end_quote
+
+   _P67 is referred to by_ used in OpenAtlas to link to documents
+   mentioning a place or an event.
+
+** End
+   #+begin_quote
+   Latest year of the reference in the document to the place mentioned
+   in the title field.
+   #+end_quote
+
+   Don't know yet!
+
+** Ccodes
+   #+begin_quote
+   Country codes as per the ISO-3166 standard that uses the two-letter
+   country codes. The code refers to the modern country where the
+   place mentioned in the title field is in.
+   #+end_quote
+
+   Not a property of the name, but of the place to which the name refers.
+
+   _P89 falls within_ E53 Place; the place has an identifier
+
+
+** Parent_name
+   #+begin_quote
+   A single toponym containing the place mentioned in the title
+   field. Derived from Linked Places optional fields’ list:
+   https://github.com/LinkedPasts/linked-places/blob/master/tsv_0.2.mda
+   #+end_quote
+
+   _P89 falls within_
+
+** References
+   #+begin_quote
+   Refers to the unique ID field (number) in the Turkish Archives table
+   #+end_quote
+
+* Latitude
+  Not a property of the name, but of the E53 Place to which it refers.
+
+* Longitude
+  Not a property of the name, but of the E53 Place to which it refers.
