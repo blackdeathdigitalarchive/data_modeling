@@ -1,4 +1,16 @@
 * Places Table Data Dictionary
+| BDDA                | CRM                                   | belongs with Place |
+|---------------------+---------------------------------------+--------------------|
+| Title               | E48 Place Name, E44 Place Appellation |                    |
+| Variants            | E48 Place Name, SKOS                  |                    |
+| Aat_types           | P2 has_type                           | yes                |
+| Title_source        | P67 is referred to by                 |                    |
+| End                 |                                       |                    |
+| Ccodes              | P89 falls within                      | yes                |
+| Parent_name         | P89 falls within                      | yes                |
+| Latitude, Longitude | P168 place is defined by              | yes                |
+
+
 ** Title
    #+begin_quote
    The name of the place mentioned in the document, as it is mentioned in the document.
