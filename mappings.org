@@ -1,14 +1,15 @@
 * Places Table Data Dictionary
-| BDDA                | CRM                                   | belongs with Place |
-|---------------------+---------------------------------------+--------------------|
-| Title               | E48 Place Name, E44 Place Appellation |                    |
-| Variants            | E48 Place Name, SKOS                  |                    |
-| Aat_types           | P2 has_type                           | yes                |
-| Title_source        | P67 is referred to by                 |                    |
-| End                 |                                       |                    |
-| Ccodes              | P89 falls within                      | yes                |
-| Parent_name         | P89 falls within                      | yes                |
-| Latitude, Longitude | P168 place is defined by              | yes                |
+** table
+| BDDA                | CRM                      | belongs with Place |
+|---------------------+--------------------------+--------------------|
+| Title               | E41 Appellation          |                    |
+| Variants            | E41 Appellation, SKOS    |                    |
+| Aat_types           | P2 has_type              | yes                |
+| Title_source        | P67 is referred to by    |                    |
+| End                 |                          |                    |
+| Ccodes              | P89 falls within         | yes                |
+| Parent_name         | P89 falls within         | yes                |
+| Latitude, Longitude | P168 place is defined by | yes                |
 
 
 ** Title
@@ -90,8 +91,61 @@
    Refers to the unique ID field (number) in the Turkish Archives table
    #+end_quote
 
-* Latitude
-  Not a property of the name, but of the E53 Place to which it refers.
+** Latitude
+   Not a property of the name, but of the E53 Place to which it refers.
 
-* Longitude
-  Not a property of the name, but of the E53 Place to which it refers.
+** Longitude
+   Not a property of the name, but of the E53 Place to which it refers.
+
+* TurkishArchives Data Dictionary
+** id
+** place name
+   #+begin_quote
+   place mentioned in the archival document from the collection
+   mentioned in column E (the COLLECTION field)
+   #+end_quote
+
+   Equivalent to the Title field in the Places table
+
+** PossibleOtherPlaces
+   #+begin_quote
+   ignore
+   #+end_quote
+** title (from Places)
+   #+begin_quote
+   links to places table
+   #+end_quote
+
+   No longer needed in the LOD model
+
+** COLLECTION
+   #+begin_quote
+   archival collection where the place is mentioned
+   #+end_quote
+
+   This field, and the FOLDER/DOC field, are bibliographic/archival
+   data.  It is not yet clear how we want or need to model source
+   documents and archives
+** FOLDER/DOC
+   #+begin_quote
+   Folder/Doc in the collection
+   #+end_quote
+
+   See COLLECTION
+
+** Date_Modern (YYYY-MM-DD) and Date_Document
+   The same _E52 Time-Span_ incorporates both of these fields; the
+   Time-Span can be _P78 is identified by_ more than one _E49 Time
+   Appellation_ to express both the modern and original expressions of
+   the date.
+
+** SUBJECT
+** EXISTENCE
+** PRECAUTIONS
+** DEATH NUMBER
+** SUMMARY
+
+** NUMBER OF IMAGES
+** DROPBOX LINK
+** FULL TEXT
+** NOTES
