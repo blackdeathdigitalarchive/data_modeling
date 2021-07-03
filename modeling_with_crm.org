@@ -1,0 +1,96 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: Modeling with CRM
+#+date: <2021-07-03 Sat>
+#+author: Clifford Wulfman
+#+email: cwulfman@princeton.edu
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
+
+
+BDDA collects accounts of /plague events/. These accounts provide
+evidence for incidents that occurred in the past.  These accounts can
+be used to infer factual information; they can also be compared and
+evaluated for reliability.
+
+Accounts are recorded in Sources.  The sources are usually
+manuscripts, which have their own properties (when they were written;
+by whom; in what languages; where they are held today).
+
+   #+begin_src n3
+     bdda:source1 a crm:E31_Document ;
+		  rdf:label "An example source document with lots of biblographic data" .
+
+   #+end_src
+
+
+   Sources can be unreliable: a description of an event doesn't prove
+   the event actually occurred.
+
+      Accounts describe, or attest to, Events.  An event may be
+   testified to by more than one source.  Sources make statements
+   about events, which may or may not be true.  So one cannot say "30
+   people died in Event X"; one must be able to say "Source A claims
+   (makes the following statement): '30 people died in Event X'."
+
+   Events are the heart of the CRM.  An Event takes place in space and
+   time. The CRM models historical events as /meetings/ occurring
+   along a world timeline.  An plague infection event is a meeting
+   between a person and an actor, /Yersinia bacillus/.  Such an event
+   is, in the CRM, a /Death/, because it comprises the death of human
+   beings (which is what we are interested in).
+
+   #+begin_src n3
+     Yersinia_pestis a crm:E1_Entity ;
+		rdf:label "Yersinia pestis" .
+
+     Outbreak_123 a crm:E69_Death ;
+		  crm:P14_carried_out_by Yersinia_pestis .
+   #+end_src
+
+   We know about this event because it was documented in a source.
+
+   #+begin_src n3
+     Outbreak_123 crm:P70_is_documented_in bdda:source1 .
+   #+end_src
+
+* Places and Toponyms
+  CRM makes a very useful distinction between /Places/ (abstract
+  geometric volumes) and the myriad names that can be used to refer to
+  them. It is prudent to record the place mentioned in a source as an
+  anonymous /E53 Place/ with a particular toponym:
+
+   #+begin_src n3
+     anevent crm:took_place_at [ a crm:E53_Place ;
+				 crm:P87_is_identified_by Topynym3333 ] .
+   #+end_src
+
+   Elsewhere we will record the fact that this use of a particular
+   toponym referred to an actual place we can locate.
+
+   #+begin_src n3
+     Topynym3333 a crm:E44_Place_Appellation ;
+		 crm:P190_has_symbolic_content "a name" .
+
+     Place33 a crm:E53_Place .
+
+     Toponym333 crm:P87_identifies Place33 .
+   #+end_src
+
+
+   In most cases, infections resulted in the deaths of some number of
+   people:
+
+   #+begin_src n3
+     Outbreak_123 crm:P100_was_death_of
+		       [a crm:E74_Group ;
+			crm:P43_has_dimension
+			     [ crm:P91_has_unit "cardinality" ;
+			       crm:P90_has_value 30 ]
+		       ] .
+   #+end_src
