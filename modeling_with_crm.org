@@ -12,44 +12,118 @@
 #+exclude_tags: noexport
 #+creator: Emacs 27.2 (Org mode 9.4.4)
 
+* Introduction
+  The mission of BDDA project is to be an interlinked research data
+  respository, as well as a locus of tools for exploring, editing, and
+  generating data.  The BDDA wants to integrate historical data with
+  epidemiological data, in order to enable research by both historians
+  of the Plague and scientists studying Y. Pestis.  To do so, the BDDA
+  collects evidence for plague outbreaks attested to in historical
+  documents.  The goals of the project are several:
 
-BDDA collects accounts of /plague events/. These accounts provide
-evidence for incidents that occurred in the past.  These accounts can
-be used to infer factual information; they can also be compared and
-evaluated for reliability.
+   - to gather these attestations from archives around the world
 
-Accounts are recorded in Sources.  The sources are usually
-manuscripts, which have their own properties (when they were written;
-by whom; in what languages; where they are held today).
+   - to formalize the attestations in a way that make them usable by
+     researchers in history and science, specifically via computer-based
+     tools.
+
+     - tools that map plague events in space and time
+
+  One of the most obvious goals of the project is to expose the data
+  buried in historical archives.  This is not as simple as it seems.
+  It is not enough to extract the names of towns and villages and link
+  them to geo-referenced places in a modern gazetteer (though this is
+  challenging enough).  Equating a place named in an historical
+  document with a specific spatial area is well known to be
+  problematic.  Names change; the place defined by a name changes.
+  Few ontologies (formal languages that describe categories in a
+  subject area, their properties, and the relation between them) in
+  use in the digital humanities today are rich enough to enable these
+  sorts of statements, but this level of detail is crucial for the
+  BDDA project.
+
+  BDDA can start by capturing toponyms.
+
+   There are several parts to the BDDA project, it seems to me.  One is to
+   transcribe historical accounts; the other is to map them.
+
+   The first is the most "historical".  Capturing place names mentioned in
+   historical records, independent of geo-mapping.
+
+   Equating a place named in an historical document with a specific spatial
+   area is well known to be problematic.  Names change; the place defined by a
+   name changes.  BDDA can start by capturing toponyms.
+
+   The (anonymous) place called X by so-and-so at time Y.
+
+
+   BDDA collects accounts of /plague events/. These accounts provide
+   evidence for incidents that occurred in the past.  These accounts
+   can be used to infer factual information; they can also be compared
+   and evaluated for reliability.
+
+   /Accounts/ are CRM E31 Documents.  E31 Documents are defined this
+   way:
+
+   #+begin_quote
+   This class comprises identifiable immaterial items that make
+   propositions about reality.
+   
+   These propositions may be expressed in text, graphics, images,
+   audiograms, videograms or by other similar means.  Documentation
+   databases are regarded as a special case of E31 Document. This
+   class should not be confused with the term \"document\" in
+   Information Technology, which is compatible with E73 Information
+   Object.
+   #+end_quote
+
+   Accounts are recorded in /Sources/.  The sources are usually
+   manuscripts, which have their own properties (when they were
+   written; by whom; in what languages; where they are held today).
+   This is an important distinction.  E31 Documents are
+   /propositional/, not /physical/.  That is, they are the /text/ of a
+   book or manuscript, not the physical object itself.  The FRBRoo
+   ontology, a specialization of the CRM, is concerned with these
+   entities and relationships; we will turn to them later.  For now,
+   we will model Accounts as being carried by Physical Things (which
+   are located on particular shelves in particular archives, etc.)
 
    #+begin_src n3
-     bdda:source1 a crm:E31_Document ;
-		  rdf:label "An example source document with lots of biblographic data" .
+     bdda:mss_1 a frbroo:F4_Manifest_Singleton .
+     # location, shelfmarks, etc. to be discussed later.
 
+     bdda:account_1 a crm:E31_Document;
+		    crm:P128_is_carried_by bdda:mss_1 .
    #+end_src
 
-
-   Sources can be unreliable: a description of an event doesn't prove
-   the event actually occurred.
-
-      Accounts describe, or attest to, Events.  An event may be
+   Accounts describe, or attest to, /Events/.  An event may be
    testified to by more than one source.  Sources make statements
    about events, which may or may not be true.  So one cannot say "30
    people died in Event X"; one must be able to say "Source A claims
    (makes the following statement): '30 people died in Event X'."
 
-   Events are the heart of the CRM.  An Event takes place in space and
+   /Events/ are the heart of the CRM.  An Event takes place in space and
    time. The CRM models historical events as /meetings/ occurring
+   in a Spacetime volume
+
    along a world timeline.  An plague infection event is a meeting
    between a person and an actor, /Yersinia bacillus/.  Such an event
    is, in the CRM, a /Death/, because it comprises the death of human
    beings (which is what we are interested in).
 
+
+   A Period is a set of coherent phenomena; a Spacetime volume is an
+   aggregation of points in spacetime (Hiebel, Doerr, and Eide, “CRMgeo.”).
+
+
+   Declarative Places and Declarative Time Spans.  A Time Expression
+   defines a Declarative Time Span
+
    #+begin_src n3
      Yersinia_pestis a crm:E1_Entity ;
 		rdf:label "Yersinia pestis" .
 
-     Outbreak_123 a crm:E69_Death ;
+     Outbreak_123 a crm:E69_Death, crm:E7_Activity ;
 		  crm:P14_carried_out_by Yersinia_pestis .
    #+end_src
 
@@ -62,26 +136,65 @@ by whom; in what languages; where they are held today).
 * Places and Toponyms
   CRM makes a very useful distinction between /Places/ (abstract
   geometric volumes) and the myriad names that can be used to refer to
-  them. It is prudent to record the place mentioned in a source as an
+  them.  The places in primary-source documents are abstract and
+  anonymous.  That means each place mentioned in a primary document is
+  unique -- the anoymous referent of a particular name.  The
+  relationship between that anonymous place and other conceptual
+  places, named or not, can be inferred or stated.
+
+  In a particular account, for example, the name /Istanbul/ refers to
+  an abstract spatio-temporal volume at location Px, at time Ty, which
+  can never be established beyond a certain degree of accuracy, and it
+  certainly doesn't correspond in every particular to the
+  spatio-temporal location named Istanbul today.  At best, we can say
+  that the place corresponds with an /approximate/ place, determined
+  via scholarship.
+
+It is prudent to record the place mentioned in a source as an
   anonymous /E53 Place/ with a particular toponym:
 
    #+begin_src n3
-     anevent crm:took_place_at [ a crm:E53_Place ;
-				 crm:P87_is_identified_by Topynym3333 ] .
+     bdda:anevent crm:took_place_at bdda:place_x .
+
+     bdda:place_x a crm:E53_Place; 
+			      crm:P87_is_identified_by Topynym3333 .
    #+end_src
 
    Elsewhere we will record the fact that this use of a particular
-   toponym referred to an actual place we can locate.
+   toponym corresponds with an actual place we can locate.
 
    #+begin_src n3
      Topynym3333 a crm:E44_Place_Appellation ;
-		 crm:P190_has_symbolic_content "a name" .
+		 crm:P190_has_symbolic_content "Istanbul" .
 
-     Place33 a crm:E53_Place .
+     # The coordinates of modern-day Istanbul
+     Place33 a crm:E53_Place ;
+		   crm:P68_place_is_defined_by [
+		      a crm:E92_Spacetime_volume ;
+		      crm:P161_has_spatial_projection geo:41.013611,28.955 .
+	      ]
 
-     Toponym333 crm:P87_identifies Place33 .
+     # The source does not refer to this place, but rather to a place that can
+     # be approximated by the place occupied by modern-day Istanbul
+
+     Toponym333 crm:P87_identifies [ a crm:E53_Place ;
+							 crm:P189_is_approximated_by Place33 ] .
    #+end_src
 
+   #+begin_src n3
+     <https://collection.itatti.harvard.edu/resource/ex/place>
+     a crm:E53_Place ;
+     crm:P168_place_is_defined_by  "POINT (9.1232696 45.2503146)"^^geo:wktLiteral ;
+
+<https://collection.itatti.harvard.edu/resource/ex/place>
+        a crm:E53_Place ;
+        crm:P168_place_is_defined_by  "POINT (9.1232696 45.2503146)"^^geo:wktLiteral ;
+         locn:geometry [
+      geo:lat "51.477811" ;
+      geo:long "-0.001475"
+    ] .
+			      
+   #+end_src
 
    In most cases, infections resulted in the deaths of some number of
    people:
@@ -94,3 +207,72 @@ by whom; in what languages; where they are held today).
 			       crm:P90_has_value 30 ]
 		       ] .
    #+end_src
+
+* Places Table
+** Places not toponyms
+   #+begin_src n3
+	     @prefix aat: <http://vocab.getty.edu/aat/> .
+
+	  bdda:place1 a crm:E53_Place ;
+		      rdfs:label "Colmek"@tr ;
+		      crm:has_type aat:300008372 ;
+
+   #+end_src
+
+* Putting it together
+  The first record in the TurkishArchives table contains the following
+  data (some fields have been removed for clarity):
+  
+
+  - id :: 1
+  - place name :: Çölmek
+  - COLLECTION :: TS.MA.e
+  - FOLDER/DOC :: 970/80
+  - Date_Modern (YYYY-MM-DD) :: 1500-01-01
+  - Date_Document :: 29 CEMAZIYELEVVEL 905
+  - SUBJECT :: PLAGUE
+  - SUMMARY :: Filibe kadısının; Filibe civarında, Çelmek Köy'ü
+    ahalisi vebadan ölüp altı hane kaldıklarından genis mezraları olan
+    bu yerlerin emlak-ı sahaneye ilhakı tavsiyesi. a.g.y.tt (TSMA No:
+    10160/463)
+
+
+  "...since the people of Çelmek Village died of the plague... "
+
+#+begin_src n3
+
+  bdda:Plague_Outbreak rdfs:subClassOf crm:E5_Event .
+
+  bdda:mss_1 a frbroo:F4_Manifest_Singleton ;
+		       rdf:label "collection TS.MA.e; folder/doc 970/80" .
+
+
+  bdda:account_1 a crm:E31_Document;
+		 crm:P128_is_carried_by bdda:mss_1 .
+
+  bdda:account_1 crm:P70_documents bdda:Outbreak_1 .
+
+  bdda:Outbreak_1 a bdda:Plague_Outbreak ;
+				 crm:P7_took_place_at [ a crm:E53_Place ;
+									    crm:P87_is_identified_by bdda:Place_Name_1  . ] ;
+				 crm:P4_has_time_span bdda:TimeSpan_1 .
+
+  bdda:Place_Name_1 a crm:E41_Appellation ;
+				      rdf:label "Çölmek"@tr ;
+				      crm:P139_has_alternative_form "Çelmek"@tr .
+
+  bdda:Place_1 a crm:E53_Place ;
+			  crm:P189_is_approximated_by [ a crm:#55_Place ;
+										    crm:P168_place_is_defined_by
+										  "POINT (9.1232696 45.2503146)"^^geo:wktLiteral ] .
+
+ bdda:Place_1 crm:P87_is_identified_by bdda:Place_Name_1 .
+
+
+
+  bdda:TimeSpan_1 a crm:E52_Time-Span ;
+				  rdfs:label "29 CEMAZIYELEVVEL 905"@tr ;
+				  crm:P82a_begin_of_the_begin "1500-01-01"^^xsd:date ;
+				  crm:P82b_end_of_the_end "1500-12-31"^^xsd:date .
+#+end_src
+

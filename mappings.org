@@ -1,4 +1,30 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: Mapping AirTable Tables to CRM
+#+date: <2021-07-04 Sun>
+#+author: Clifford Wulfman
+#+email: cwulfman@princeton.edu
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
+
+There are, at the outset, two tables in the BDDA's AirTable base.
+They contain data compiled by the BDDA team, and the records (rows)
+are not aligned with CRM entities or properties.
+
+One of the first data tasks is to align this data with CRM entities
+and properties in a new set of tables.
+
 * Places Table Data Dictionary
+  The records in this table constitute a gazetteer for the accounts of
+  plague-related events.  The toponyms (E44 Place Appellations) are
+  linked to E53 Places; the CRM places are the entities with
+  geospatial coordinates.
+
 ** table
 | BDDA                | CRM                      | belongs with Place |
 |---------------------+--------------------------+--------------------|
@@ -98,6 +124,7 @@
    Not a property of the name, but of the E53 Place to which it refers.
 
 * TurkishArchives Data Dictionary
+
 ** id
 ** place name
    #+begin_quote
@@ -149,3 +176,14 @@
 ** DROPBOX LINK
 ** FULL TEXT
 ** NOTES
+* Examples
+** Turkish Archives
+*** item #96
+    - id :: 96
+    - Place Name :: Eşkel-i Kebir
+    - Variants :: Essence
+    - AAT_Types :: Neighborhood
+    - Title_Source :: https://tr.wikipedia.org/wiki/Esence,_Mudanya
+    - CCodes :: TR
+    - Parent_Name :: Bursa
+    - References :: 
