@@ -1,0 +1,161 @@
+# Samples from the Turkish Archives table
+# 
+@prefix bdda: <http://bdda/> .
+@prefix account: <http://bdda/accounts/> .
+@prefix toponym: <http://bdda/toponyms/> .
+@prefix place: <http://bdda/places/> .
+@prefix crm: <http://erlangen-crm.org/200717/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+	
+#
+# Accounts
+#
+account:1053 a crm:E31_Document ;
+	     rdf:value "It was reported by the governor of Erzurum that Russia was preparing two units to send to the border. The report also contained information that the Russian consulate decided that if the plague occurs quarantine should commence" ;
+	     crm:P67_refers_to place:001 ;
+	     crm:P67_refers_to place:002 .
+
+account:1102 a crm:E31_Document ;
+	     rdf:value "No deaths are reported in Jeddah, but it was reported that 4 people from Morocco and Syria were quarantined." ;
+	     crm:P67_refers_to place:003 ;
+	     crm:P67_refers_to place:004 ;
+	     crm:P67_refers_to place:005 .
+
+account:1648 a crm:E31_Document ;
+	    rdf:value "The Bulgarian state has implemented quarantine at certain border gates when they found out about the plague occurance in the Ottoman Empire" ;
+	    crm:P67_refers_to place:006 .
+
+account:1728 a crm:E31_Document ;
+	     rdf:value "Because plague and cholera have been reported in Egypt, the ships coming from there should not be allowed to land at Jaffa." ;
+     	    crm:P67_refers_to place:007 .
+
+account:1763 a crm:E31_Document ;
+	     rdf:value "Report about the official who will be sent to the plague conference in Venice" ;
+       	     crm:P67_refers_to place:008 .
+
+account:1829 a crm:E31_Document ;
+	     rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]." ;
+	     crm:P67_refers_to place:009 .
+
+account:1841 a crm:E31_Document ;
+	     rdf:value "Miscell. report by the Bulgarian consulate about observed incidence of plague in certain islands and cities of Australia and Port Allegre in Brazil" ;
+	     crm:P67_refers_to place:010 ;
+	     crm:P67_refers_to place:011 ;
+	     crm:P67_refers_to place:012 .
+
+account:1870 a crm:E31_Document ;
+	     rdf:value "There is a chance that the infectious disease reported in Mitylene (Greek Island) is the plague. There is a need to act on the acquired names and residence information of the people who traveled by boat from there." ;
+     	     crm:P67_refers_to place:013 .
+
+account:2231 a crm:E31_Document ;
+	     rdf:value "The Foreign Ministry of Spain reported incidence of the plague in LA, California USA." ;
+	     crm:P67_refers_to place:014 .
+
+account:2210 a crm:E31_Document ;
+	     rdf:value "Delay the hajj pilgrimage until it is understood that the infectious disease that hit Yemen is not cholera or the plague." ;
+	     crm:P67_refers_to place:015 ;
+    	     crm:P67_refers_to place:016 .
+
+#
+# Toponyms
+#
+toponym:348 a crm:E41_Appellation ;
+	    rdf:value "Anadolu'daki Rus Sınırı" .
+
+toponym:41 a crm:E41_Appellation ;
+	   rdf:value "Rusya" .
+
+toponym:327 a crm:E41_Appellation ;
+	  rdf:value "Cidde" .
+
+toponym:41 a crm:E41_Appellation ;
+	   rdf:value "Fas" .
+
+toponym:353 a crm:E41_Appellation ;
+	  rdf:value "Suriye" .
+
+toponym:592 a crm:E41_Appellation ;
+	  rdf:value "Osmanlı Devleti" .
+
+toponym:49 a crm:E41_Appellation ;
+	  rdf:value "Mısır" .
+
+toponym:344 a crm:E41_Appellation ;
+	  rdf:value "Venedik" .
+
+toponym:370 a crm:E41_Appellation ;
+	  rdf:value "Beyrut" .
+
+toponym:433 a crm:E41_Appellation ;
+	  rdf:value "Port Allegre" .
+
+toponym:380 a crm:E41_Appellation ;
+	  rdf:value "Yeni Kaledonya" .
+
+toponym:381 a crm:E41_Appellation ;
+	  rdf:value "Adelaide" .
+
+toponym:436 a crm:E41_Appellation ;
+	  rdf:value "Midilli" .
+
+toponym:483 a crm:E41_Appellation ;
+	  rdf:value "Los Angeles" .
+
+toponym:308 a crm:E41_Appellation ;
+	  rdf:value "Yemen" .
+
+toponym:350 a crm:E41_Appellation ;
+	  rdf:value "Arabistan" .
+
+
+# Places
+
+place:001 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:348 .
+
+place:002 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:41 .
+
+place:003 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:348 .
+
+place:004 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:41 .
+
+place:005 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:353 .
+
+place:006 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:592 .
+
+place:007 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:49 .
+
+place:008 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:344 .
+
+place:009 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:370 .
+
+place:010 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:380 .
+
+place:011 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:381 .
+
+place:012 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:433 .
+
+place:013 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:436 .
+
+place:014 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:483 .
+
+place:015 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:308 .
+
+place:016 a crm:E53_Place ;
+	  crm:P87_is_identified_by toponym:350 .
