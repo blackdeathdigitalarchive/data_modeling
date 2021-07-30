@@ -4,59 +4,86 @@
 @prefix account: <http://bdda/accounts/> .
 @prefix toponym: <http://bdda/toponyms/> .
 @prefix place: <http://bdda/places/> .
+@prefix stv: <http://bdda/stvs/> .
 @prefix crm: <http://erlangen-crm.org/200717/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 	
+# The AirTable table contains fields that represent information about
+# documentary evidence in the Turkish archives.  The entries record
+# where the evidence is located (what document, etc.); a summary or
+# excerpt from the archival document comprising the evidence; and the
+# names of places mentioned in the evidence.
+#
+# Each piece of evidence is a crm:E31 Document.  The places mentioned
+# are not E53 Places, because these are mathematical coordinates; they
+# are, instead, E92 Spacetime Volumes:
+#
+# This class comprises 4 dimensional point sets (volumes) in physical
+# spacetime (in contrast to mathematical models of it) regardless
+# their true geometric forms. They may derive their identity from
+# being the extent of a material phenomenon or from being the
+# interpretation of an expression defining an extent in
+# spacetime. Intersections of instances of E92 Spacetime Volume, E53
+# Place and E52 Timespan are also regarded as instances of E92
+# Spacetime Volume. An instance of E92 Spacetime Volume is either
+# contiguous or composed of a finite number of contiguous subsets. Its
+# boundaries may be fuzzy due to the properties of the phenomena it
+# derives from or due to the limited precision up to which defining
+# expression can be identified with a real extent in spacetime. The
+# duration of existence of an instance of E92 Spacetime Volume is its
+# projection on time.
+
+
 #
 # Accounts
 #
 account:1053 a crm:E31_Document ;
 	     rdf:value "It was reported by the governor of Erzurum that Russia was preparing two units to send to the border. The report also contained information that the Russian consulate decided that if the plague occurs quarantine should commence" ;
-	     crm:P67_refers_to place:001 ;
-	     crm:P67_refers_to place:002 .
+	     crm:P67_refers_to stv:001 ;
+	     crm:P67_refers_to stv:002 .
 
 account:1102 a crm:E31_Document ;
 	     rdf:value "No deaths are reported in Jeddah, but it was reported that 4 people from Morocco and Syria were quarantined." ;
-	     crm:P67_refers_to place:003 ;
-	     crm:P67_refers_to place:004 ;
-	     crm:P67_refers_to place:005 .
+	     crm:P67_refers_to stv:003 ;
+	     crm:P67_refers_to stv:004 ;
+	     crm:P67_refers_to stv:005 .
 
 account:1648 a crm:E31_Document ;
 	    rdf:value "The Bulgarian state has implemented quarantine at certain border gates when they found out about the plague occurance in the Ottoman Empire" ;
-	    crm:P67_refers_to place:006 .
+	    crm:P67_refers_to stv:006 .
 
 account:1728 a crm:E31_Document ;
 	     rdf:value "Because plague and cholera have been reported in Egypt, the ships coming from there should not be allowed to land at Jaffa." ;
-     	    crm:P67_refers_to place:007 .
+     	    crm:P67_refers_to stv:007 .
 
 account:1763 a crm:E31_Document ;
 	     rdf:value "Report about the official who will be sent to the plague conference in Venice" ;
-       	     crm:P67_refers_to place:008 .
+       	     crm:P67_refers_to stv:008 .
 
 account:1829 a crm:E31_Document ;
 	     rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]." ;
-	     crm:P67_refers_to place:009 .
+	     crm:P67_refers_to stv:009 .
 
 account:1841 a crm:E31_Document ;
 	     rdf:value "Miscell. report by the Bulgarian consulate about observed incidence of plague in certain islands and cities of Australia and Port Allegre in Brazil" ;
-	     crm:P67_refers_to place:010 ;
-	     crm:P67_refers_to place:011 ;
-	     crm:P67_refers_to place:012 .
+	     crm:P67_refers_to stv:010 ;
+	     crm:P67_refers_to stv:011 ;
+	     crm:P67_refers_to stv:012 .
 
 account:1870 a crm:E31_Document ;
 	     rdf:value "There is a chance that the infectious disease reported in Mitylene (Greek Island) is the plague. There is a need to act on the acquired names and residence information of the people who traveled by boat from there." ;
-     	     crm:P67_refers_to place:013 .
+     	     crm:P67_refers_to stv:013 .
 
 account:2231 a crm:E31_Document ;
 	     rdf:value "The Foreign Ministry of Spain reported incidence of the plague in LA, California USA." ;
-	     crm:P67_refers_to place:014 .
+	     crm:P67_refers_to stv:014 .
 
 account:2210 a crm:E31_Document ;
 	     rdf:value "Delay the hajj pilgrimage until it is understood that the infectious disease that hit Yemen is not cholera or the plague." ;
-	     crm:P67_refers_to place:015 ;
-    	     crm:P67_refers_to place:016 .
+	     crm:P67_refers_to stv:015 ;
+    	     crm:P67_refers_to stv:016 .
 
 #
 # Toponyms
@@ -112,50 +139,50 @@ toponym:350 a crm:E41_Appellation ;
 
 # Places
 
-place:001 a crm:E53_Place ;
+stv:001 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:348 .
 
-place:002 a crm:E53_Place ;
+stv:002 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:41 .
 
-place:003 a crm:E53_Place ;
+stv:003 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:348 .
 
-place:004 a crm:E53_Place ;
+stv:004 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:41 .
 
-place:005 a crm:E53_Place ;
+stv:005 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:353 .
 
-place:006 a crm:E53_Place ;
+stv:006 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:592 .
 
-place:007 a crm:E53_Place ;
+stv:007 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:49 .
 
-place:008 a crm:E53_Place ;
+stv:008 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:344 .
 
-place:009 a crm:E53_Place ;
+stv:009 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:370 .
 
-place:010 a crm:E53_Place ;
+stv:010 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:380 .
 
-place:011 a crm:E53_Place ;
+stv:011 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:381 .
 
-place:012 a crm:E53_Place ;
+stv:012 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:433 .
 
-place:013 a crm:E53_Place ;
+stv:013 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:436 .
 
-place:014 a crm:E53_Place ;
+stv:014 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:483 .
 
-place:015 a crm:E53_Place ;
+stv:015 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:308 .
 
-place:016 a crm:E53_Place ;
+stv:016 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:350 .
