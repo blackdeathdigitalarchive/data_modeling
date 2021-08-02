@@ -9,6 +9,9 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+
 	
 # The AirTable table contains fields that represent information about
 # documentary evidence in the Turkish archives.  The entries record
@@ -143,7 +146,8 @@ stv:001 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:348 .
 
 stv:002 a crm:E92_Spacetime_Volume ;
-	  crm:P87_is_identified_by toponym:41 .
+	  crm:P87_is_identified_by toponym:41 ;
+	  geo:hasGeometry 
 
 stv:003 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:348 .
@@ -164,7 +168,21 @@ stv:008 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:344 .
 
 stv:009 a crm:E92_Spacetime_Volume ;
-	  crm:P87_is_identified_by toponym:370 .
+	  crm:P87_is_identified_by toponym:370 ;
+	  crm:P161_has_spatial_projection place:foo .
+
+stv:009 a crm:E92_Spacetime_Volume ;
+	  crm:P87_is_identified_by toponym:370 ;
+	  crm:P161_has_spatial_projection "POINT (35.51306 33.886944)"^^geo:wktLiteral ;
+	  crm:P4_has_time-span [ a E52_Time-Span ;
+	  		         crm:P82a_begin_of_the_begin "1901-01-01"^^xsd:dateTime ;
+				 crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime ] .
+
+# or crm:P189i_is_approximated_by
+
+place:foo a crm:E53_Place,  ;
+	  geo:hasGeometry [ a geo:Geometry ;
+	  		    geo:asWKT "POINT (35.51306 33.886944)"^^geo:wktLiteral .] .
 
 stv:010 a crm:E92_Spacetime_Volume ;
 	  crm:P87_is_identified_by toponym:380 .

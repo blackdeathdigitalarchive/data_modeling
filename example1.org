@@ -1,0 +1,298 @@
+* Introduction
+  Ece has selected ten rows from the Turkish Archives table to
+  experiment with; here is a worked-out description in CIDOC-CRM.
+
+
+  | Number |   ID | Place Name | Summary                                                                                                 |
+  |--------+------+------------+---------------------------------------------------------------------------------------------------------|
+  |   1682 | 1829 | Beruit     | Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]. |
+
+  (I have also drawn the date from the original table; it is a modern
+  report with a precise date of May 24, 1901, so it is not very
+  representative of the fuzzier dates in the data set.)
+
+  We're going to follow a commonly employed practice and create some
+  prefixes for our objects.  In RDF, everything must have an IRI (a
+  kind of URL), and, for linked-open-data projects, all the IRIs
+  should be actual URIs that point to actual resources on the Web.  In
+  practice, that means contriving a namespace governed by a domain you
+  control, with URLs that resolve to documents or resources in that
+  domain.  We'll finesse this for now, and assume our base URI is
+  http://bdda.org
+
+* Documenting Evidence
+
+  The Turkish table contains information about various sorts of
+  documentary evidence recorded in documents in the Turkish archives.
+  Evidentiary statements are modeled as /E31_Document/ objects in CRM:
+
+  #+begin_quote
+  This class comprises identifiable immaterial items that make
+  propositions about reality.
+
+  These propositions may be expressed in text, graphics, images,
+  audiograms, videograms or by other similar means. Documentation
+  databases are regarded as a special case of E31 Document. This class
+  should not be confused with the term \"document\" in Information
+  Technology, which is compatible with E73 Information Object.
+
+  Examples:
+   - the Encyclopaedia Britannica (E32) (Kogan, 1958)
+   - The image content of the photo of the Allied Leaders at Yalta published by UPI, 1945 (E38)
+   - the Doomsday Book
+  #+end_quote
+
+  So we can contrive a URI for this piece of evidence using our
+  baseURI and a namespace called /accounts/:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+    account:1829 rdf:type crm:E31_Document .
+  #+end_src
+
+We will employ the same convention to establish other perspicuous
+namespaces.
+
+ We will record the actual text of the evidence, or of the summary, as
+ one or more /rdf:values/, allowing us to capture the original
+ language and the translation:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    account:1829 rdf:type crm:E31_Document ;
+	       rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
+	       rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]."@en .
+  #+end_src
+
+  The manuscript or paper record on which the account is transcribed
+  is, in CRM, an /E73_Information_Object/, and for our purposes we can
+  record a bibliographic reference as a simple label.
+
+  #+begin_src n3
+    mss:mss_1 a crm:Information_Object ;
+	      rdf:label "collection TS.MA.e; folder/doc 970/80" .
+  #+end_src
+
+* Events in Space and Time
+  What is more relevant, however, are the places mentioned in the
+  evidence and the time period to which the evidence refers.  We want
+  to be able to answer questions like "What happened?  Where?  When?"
+  The /what/ is complicated, and I'm going to leave that for the next
+  section.  But describing events that occur in space and time is one
+  of the primary strengths of CRM, and there are very nuanced things
+  you can say with it.
+
+  CRM uses the notion of a space-time volume to describe an event as
+  something that occurred at a particular location at a particular
+  point or period in time with a number of properties: its location
+  (its projection in space) and its time-span (when and for how long
+  this particular designation obtained):
+
+  #+begin_src n3
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix geo: <http://www.opengis.net/ont/geosparql#> .
+    @prefix stv: <http://bdda.org/stvs> .
+
+    stv:009 a crm:E92_Spacetime_Volume ;
+	    rdf:label "Beruit, approximately 1901" ;
+	    crm:P161_has_spatial_projection "POINT (35.51306 33.886944)"^^geo:wktLiteral ;
+	    crm:P4_has_time-span [ a E52_Time-Span ;
+				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
+  #+end_src
+
+  There are lots of things to unpack here.  First note the use of the
+  property /rdf:label/; this property is almost universally employed
+  in linked-data applications to provide a convenient handle for
+  particular instances: "stv:009" is not very perspicuous.  The label
+  should be used for convenience only; it is not part of the model and
+  is not a substitute for the place name (we'll get to that in a
+  minute).
+
+  The coordinates defining the actual location of the place on Earth
+  are called its spatial projection.  The property
+  /P161_has_spatial_projection/ can refer to a string that represents
+  coordinates in any system; applications commonly use the datatypes
+  defined by geoSPARQL, because these can readily be used by programs
+  that project points or polygonal regions onto a map.  Here we are
+  using a popular format, WKT, or [[https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry][Well-Known Text]], to describe the
+  location of Beirut.  A spaceime volume can have many spatial
+  projections of varying degrees of complexity; here we are using a
+  simple longitude-latitude point, as recorded in the Turkish table.
+
+  This spatial projection is convenient, but it is not very accurate.
+  For one thing, it does not take into consideration that the
+  coordinates of modern-day Beirut (as provided by Geonames and other
+  gazetteers) may not be those of Beirut in 1901.  In this case, of
+  course, the difference is irrelevant to our applications, but in
+  plotting the location of medieval places, or in plotting abstract
+  places like political borders, the difference across time may be
+  significant.
+
+  The specificity of the date recorded in the Turkish table
+  (1901-05-24) lets us establish a clear outer time bound for the
+  event we're interested in -- the occurance of plague in Beirut --
+  because the occurance could not have started after the report was
+  filed. It might have been ongoing at the time of the report,
+  however, so we cannot say with precision exactly when the plague
+  event ended.  CRM has a set of predicates that enable the expression
+  of temporal fuzziness:
+
+  #+begin_src n3
+    :time-span crm:end_of_the_begin "1901-05-24"^^xsd:dateTime .
+  #+end_src
+
+  says that the event could not have started after the report date.
+
+  The summary provides no information on the inner bound of the
+  time-span.  Did the observation take place a week before the report?
+  A day?  A month?  Further research would have to be done.
+
+  This spatio-temporal envelope incompassing the occurance of plague
+  is an abstraction, but the report gives it a name: /Beyrut/.  CRM
+  allows us to express this naming with the /E41_Appellation/ class:
+
+  #+begin_src n3
+  toponym:370 a crm:E41_Appellation ;
+	      crm:P190_has_symbolic_content "Beyrut"@tr ;
+	      crm:P1_is_identified_by "Beyrut"@tr ;
+	      rdfs:label "Beyrut" ;
+	      rdfs:label "Beirut" .
+  #+end_src
+
+This allows for great flexibility, but is a bit cumbersome.
+
+* Modeling Events
+  We have seen how to use CRM to encode information about a particular
+  place at a particular time, and how to link that information to a
+  passage that refers to them.  But what, exactly, is being documented?
+  CRM is based on an event model:
+
+  #+begin_quote
+  [E5_Event] comprises distinct, delimited and coherent processes and
+  interactions of a material nature, in cultural, social or physical
+  systems, involving and affecting instances of E77 Persistent Item in
+  a way characteristic of the kind of process. Typical examples are
+  meetings, births, deaths, actions of decision taking, making or
+  inventing things, but also more complex and extended ones such as
+  conferences, elections, building of a castle, or battles.
+
+  While the continuous growth of a tree lacks the limits
+  characteristic of an event, its germination from a seed does qualify
+  as an event. Similarly the blowing of the wind lacks the
+  distinctness and limits of an event, but a hurricane, flood or
+  earthquake would qualify as an event. Mental processes are
+  considered as events, in cases where they are connected with the
+  material externalization of their results; for example the creation
+  of a poem, a performance or a change of intention that becomes
+  obvious from subsequent actions or declarations.
+
+  The effects of an instance of E5 Event may not lead to relevant
+  permanent changes of properties or relations of the items involved
+  in it, for example an unrecorded performances. Of course, in order
+  to be documented, some kind of evidence for an event must exist, be
+  it witnesses, traces or products of the event. While instances of E4
+  Period always require some form of coherence between its constituent
+  phenomena, in addition, the essential constituents of instances of
+  E5 Event should contribute to an overall effect; for example the
+  statements made during a meeting and the listening of the audience.
+
+  Viewed at a coarse level of detail, an instance of E5 Event may
+  appear as if it had an ‘instantaneous’ overall effect, but any
+  process or interaction of material nature in reality have an extent
+  in time and space. At a fine level, instances of E5 Event may be
+  analyzed into component phenomena and phases within a space and
+  timeframe, and as such can be seen as a period, regardless of the
+  size of the phenomena. The reverse is not necessarily the case: not
+  all instances of E4 Period give rise to a noteworthy overall effect
+  and are thus not instances of E5 Event.
+
+  Examples:
+  - the birth of Cleopatra (E67) (Pomeroy, 1984)
+  - the destruction of Herculaneum by volcanic eruption in 79 AD (E6) (Camardo, 2013)
+  - World War II (E7) (Barber, 1994)
+  - the Battle of Stalingrad (E7) (Hoyt, 1993)
+  - the Yalta Conference (E7) (Harbutt, 2010)
+  - my birthday celebration 28-6-1995 (E7)
+  - the falling of a tile from my roof last Sunday
+  - the CIDOC Conference 2003 (E7)
+  #+end_quote
+
+  We will, eventually, want to develop a thesaurus of event types, but
+  for now, we will simply use a string.
+
+  #+begin_src n3
+    event_001 a crm:E5_Event ;
+	  rdf:label "a case of plague in Beirut" ;
+	  crm:P2_has_type "plague occurance" .
+  #+end_src
+
+  Because /E53_Event/ is a subclass of /E92_Spacetime_Volume/, we can
+  apply the same properties as we did in the example above.
+
+  #+begin_src n3
+    event_001 a crm:E5_Event ;
+	  rdf:label "a case of plague in Beirut" ;
+	  crm:P2_has_type "plague occurance" ;
+	  crm:P7_took_place_at place:0001 ;
+	  crm:P4_has_time-span [ a E52_Time-Span ;
+				crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
+
+
+     place:0001 a crm:E53_Place ;
+		rdf:label "Beirut" ;
+		crm:P161_has_spatial_projection "POINT (35.51306 33.886944)"^^geo:wktLiteral ;
+
+
+  #+end_src
+
+  #+begin_src n3
+    _:event a E5_Event ;
+	p7_took_place_at bdda:place1 .
+
+    bdda_place1 a E53_Place ;
+	    rdfs:label "Beirut" ;
+	q11i_approximated_by [
+	   a SP6_Declarative_Place;
+	   P168_place_is_defined_by  "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+	] .
+
+    # or this
+    bdda_place1 a crmgeo:SP6_Declarative_Place ;
+	        crmgeo:Q10i_is_defined_by  "POINT (35.51306 33.886944)"^^geo:wktLiteral .
+  #+end_src
+
+  The boundaries and distinctions between CRM_core and CRM_geo appear
+  to be rather fluid at the moment.  From what I've gleaned, CRM_geo
+  explicitly aims to align with geoSPARQL, and so I'm leaning toward
+  using the CRM_geo extension for compatibility with systems that use
+  geoSPARQL.  Thus
+
+  #+begin_src n3
+      _:event a E5_Event ;
+	  p7_took_place_at bdda:place1 .
+          crm:P4_has_time-span [ a E52_Time-Span ;
+				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
+
+      bdda:place1 a E53_Place, geosparql:Feature ;
+	      rdfs:label "Beirut" ;
+	      Q11i_is_approximated_by [
+	     a SP6_Declarative_Place;
+	     Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+	  ] .
+
+    toponym:370 a crm:E41_Appellation ;
+		crm:P190_has_symbolic_content "Beyrut"@tr ;
+		crm:P1_is_identified_by "Beyrut"@tr ;
+		rdfs:label "Beyrut" ;
+		rdfs:label "Beirut" .
+
+    bdda:place1 P87_is_identified_by toponym:370
+
+
+  #+end_src
