@@ -85,7 +85,8 @@ namespaces.
   The /what/ is complicated, and I'm going to leave that for the next
   section.  But describing events that occur in space and time is one
   of the primary strengths of CRM, and there are very nuanced things
-  you can say with it.
+  you can say with it.  The CRMgeo extention was developed to align
+  CRM concepts explicitly with geoSPARQL.
 
   CRM uses the notion of a space-time volume to describe an event as
   something that occurred at a particular location at a particular
@@ -97,13 +98,26 @@ namespaces.
     @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix geo: <http://www.opengis.net/ont/geosparql#> .
-    @prefix stv: <http://bdda.org/stvs> .
 
-    stv:009 a crm:E92_Spacetime_Volume ;
-	    rdf:label "Beruit, approximately 1901" ;
-	    crm:P161_has_spatial_projection "POINT (35.51306 33.886944)"^^geo:wktLiteral ;
-	    crm:P4_has_time-span [ a E52_Time-Span ;
+      event:1 a E5_Event ;
+	  p7_took_place_at bdda:place1 .
+	  crm:P4_has_time-span [ a E52_Time-Span ;
 				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
+
+      bdda:place1 a E53_Place, geosparql:Feature ;
+	      rdfs:label "Beirut" ;
+	      Q11i_is_approximated_by [
+	     a crmgeo:SP6_Declarative_Place;
+	     crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+	  ] .
+
+    toponym:370 a crm:E41_Appellation ;
+		crm:P190_has_symbolic_content "Beyrut"@tr ;
+		crm:P1_is_identified_by "Beyrut"@tr ;
+		rdfs:label "Beyrut" ;
+		rdfs:label "Beirut" .
+
+    bdda:place1 P87_is_identified_by toponym:370 .
   #+end_src
 
   There are lots of things to unpack here.  First note the use of the
@@ -114,9 +128,10 @@ namespaces.
   is not a substitute for the place name (we'll get to that in a
   minute).
 
-  The coordinates defining the actual location of the place on Earth
-  are called its spatial projection.  The property
-  /P161_has_spatial_projection/ can refer to a string that represents
+  The CRMgeo ontology defines two kinds of places: phenomenal places
+  -- the places that actually exist in the world -- and declarative
+  places: those abstract places defined by coordinates.  The property
+  /Q10i_is_defined_by/ can refer to a string that represents
   coordinates in any system; applications commonly use the datatypes
   defined by geoSPARQL, because these can readily be used by programs
   that project points or polygonal regions onto a map.  Here we are
@@ -124,15 +139,6 @@ namespaces.
   location of Beirut.  A spaceime volume can have many spatial
   projections of varying degrees of complexity; here we are using a
   simple longitude-latitude point, as recorded in the Turkish table.
-
-  This spatial projection is convenient, but it is not very accurate.
-  For one thing, it does not take into consideration that the
-  coordinates of modern-day Beirut (as provided by Geonames and other
-  gazetteers) may not be those of Beirut in 1901.  In this case, of
-  course, the difference is irrelevant to our applications, but in
-  plotting the location of medieval places, or in plotting abstract
-  places like political borders, the difference across time may be
-  significant.
 
   The specificity of the date recorded in the Turkish table
   (1901-05-24) lets us establish a clear outer time bound for the
@@ -159,140 +165,55 @@ namespaces.
 
   #+begin_src n3
   toponym:370 a crm:E41_Appellation ;
-	      crm:P190_has_symbolic_content "Beyrut"@tr ;
-	      crm:P1_is_identified_by "Beyrut"@tr ;
 	      rdfs:label "Beyrut" ;
-	      rdfs:label "Beirut" .
+	      crm:P190_has_symbolic_content "Beyrut"@tr ;
+	      crm:P1_is_identified_by "Beyrut"@tr .
   #+end_src
 
-This allows for great flexibility, but is a bit cumbersome.
-
-* Modeling Events
-  We have seen how to use CRM to encode information about a particular
-  place at a particular time, and how to link that information to a
-  passage that refers to them.  But what, exactly, is being documented?
-  CRM is based on an event model:
-
-  #+begin_quote
-  [E5_Event] comprises distinct, delimited and coherent processes and
-  interactions of a material nature, in cultural, social or physical
-  systems, involving and affecting instances of E77 Persistent Item in
-  a way characteristic of the kind of process. Typical examples are
-  meetings, births, deaths, actions of decision taking, making or
-  inventing things, but also more complex and extended ones such as
-  conferences, elections, building of a castle, or battles.
-
-  While the continuous growth of a tree lacks the limits
-  characteristic of an event, its germination from a seed does qualify
-  as an event. Similarly the blowing of the wind lacks the
-  distinctness and limits of an event, but a hurricane, flood or
-  earthquake would qualify as an event. Mental processes are
-  considered as events, in cases where they are connected with the
-  material externalization of their results; for example the creation
-  of a poem, a performance or a change of intention that becomes
-  obvious from subsequent actions or declarations.
-
-  The effects of an instance of E5 Event may not lead to relevant
-  permanent changes of properties or relations of the items involved
-  in it, for example an unrecorded performances. Of course, in order
-  to be documented, some kind of evidence for an event must exist, be
-  it witnesses, traces or products of the event. While instances of E4
-  Period always require some form of coherence between its constituent
-  phenomena, in addition, the essential constituents of instances of
-  E5 Event should contribute to an overall effect; for example the
-  statements made during a meeting and the listening of the audience.
-
-  Viewed at a coarse level of detail, an instance of E5 Event may
-  appear as if it had an ‘instantaneous’ overall effect, but any
-  process or interaction of material nature in reality have an extent
-  in time and space. At a fine level, instances of E5 Event may be
-  analyzed into component phenomena and phases within a space and
-  timeframe, and as such can be seen as a period, regardless of the
-  size of the phenomena. The reverse is not necessarily the case: not
-  all instances of E4 Period give rise to a noteworthy overall effect
-  and are thus not instances of E5 Event.
-
-  Examples:
-  - the birth of Cleopatra (E67) (Pomeroy, 1984)
-  - the destruction of Herculaneum by volcanic eruption in 79 AD (E6) (Camardo, 2013)
-  - World War II (E7) (Barber, 1994)
-  - the Battle of Stalingrad (E7) (Hoyt, 1993)
-  - the Yalta Conference (E7) (Harbutt, 2010)
-  - my birthday celebration 28-6-1995 (E7)
-  - the falling of a tile from my roof last Sunday
-  - the CIDOC Conference 2003 (E7)
-  #+end_quote
-
-  We will, eventually, want to develop a thesaurus of event types, but
-  for now, we will simply use a string.
+  Putting it all together, we get this CRM translation of the Turkish
+  table entry:
 
   #+begin_src n3
-    event_001 a crm:E5_Event ;
-	  rdf:label "a case of plague in Beirut" ;
-	  crm:P2_has_type "plague occurance" .
-  #+end_src
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix mss: <http://bdda.org/manuscripts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix crmgeo: <foo> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix aat: <http://vocab.getty.edu/page/aat/> .
 
-  Because /E53_Event/ is a subclass of /E92_Spacetime_Volume/, we can
-  apply the same properties as we did in the example above.
+    account:1829 a crm:E31_Document ;
+		  rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
+		 rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]."@en .
 
-  #+begin_src n3
-    event_001 a crm:E5_Event ;
-	  rdf:label "a case of plague in Beirut" ;
-	  crm:P2_has_type "plague occurance" ;
-	  crm:P7_took_place_at place:0001 ;
-	  crm:P4_has_time-span [ a E52_Time-Span ;
-				crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
-
-
-     place:0001 a crm:E53_Place ;
-		rdf:label "Beirut" ;
-		crm:P161_has_spatial_projection "POINT (35.51306 33.886944)"^^geo:wktLiteral ;
-
-
-  #+end_src
-
-  #+begin_src n3
-    _:event a E5_Event ;
-	p7_took_place_at bdda:place1 .
-
-    bdda_place1 a E53_Place ;
-	    rdfs:label "Beirut" ;
-	q11i_approximated_by [
-	   a SP6_Declarative_Place;
-	   P168_place_is_defined_by  "POINT (35.51306 33.886944)"^^geo:wktLiteral 
-	] .
-
-    # or this
-    bdda_place1 a crmgeo:SP6_Declarative_Place ;
-	        crmgeo:Q10i_is_defined_by  "POINT (35.51306 33.886944)"^^geo:wktLiteral .
-  #+end_src
-
-  The boundaries and distinctions between CRM_core and CRM_geo appear
-  to be rather fluid at the moment.  From what I've gleaned, CRM_geo
-  explicitly aims to align with geoSPARQL, and so I'm leaning toward
-  using the CRM_geo extension for compatibility with systems that use
-  geoSPARQL.  Thus
-
-  #+begin_src n3
-      _:event a E5_Event ;
-	  p7_took_place_at bdda:place1 .
-          crm:P4_has_time-span [ a E52_Time-Span ;
-				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
-
-      bdda:place1 a E53_Place, geosparql:Feature ;
-	      rdfs:label "Beirut" ;
-	      Q11i_is_approximated_by [
-	     a SP6_Declarative_Place;
-	     Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
-	  ] .
+    mss:mss_1 a crm:E73_Information_Object ;
+	      rdf:label "collection TS.MA.e; folder/doc 970/80" ;
+	      crm:P128_carries account:1829 .
 
     toponym:370 a crm:E41_Appellation ;
-		crm:P190_has_symbolic_content "Beyrut"@tr ;
-		crm:P1_is_identified_by "Beyrut"@tr ;
-		rdfs:label "Beyrut" ;
-		rdfs:label "Beirut" .
+		  crm:P190_has_symbolic_content "Beyrut"@tr ;
+		  crm:P1_is_identified_by "Beyrut"@tr ;
+		  crm:P1_is_identified_by "Beirut"@en ;
+		  rdfs:label "Beyrut" ;
+		  rdfs:label "Beirut" ;
+		  crm:P2_has_type aat:300008389 . # not the right designation; fix.
 
-    bdda:place1 P87_is_identified_by toponym:370
+    bdda:place_beirut a crm:E53_Place, geosparql:Feature ;
+		  rdfs:label "Beirut" ;
+		  crm:P87_is_identified_by toponym:370 ;
+		  crmgeo:Q11i_is_approximated_by [
+			 a crmgeo:SP6_Declarative_Place;
+			 crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+			 ] .
 
+    account:1829 crm:P67_refers_to [ a crm:E53_Place ;
+				     crm:P87_is_identified_by toponym:370 ] .
 
+    account:1829 crm:P70_documents event:01 .
+
+    event:01 a crm:E5_Event ;
+	     rdf:label "a case of plague reported in Beirut" ;
+	     crm:P2_has_type "plague occurance" .
+	     crm:P7_took_place_at bdda:place_beirut ;
+	     crm:P4_has_time-span [ a E52_Time-Span ;
+				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime ] .
   #+end_src
