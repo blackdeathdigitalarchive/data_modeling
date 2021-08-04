@@ -185,7 +185,7 @@ namespaces.
 		  rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
 		 rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]."@en .
 
-    mss:mss_1 a crm:E73_Information_Object ;
+    mss:mss_1 a crm:E33_Linguistic_Object ;
 	      rdf:label "collection TS.MA.e; folder/doc 970/80" ;
 	      crm:P128_carries account:1829 .
 
@@ -199,7 +199,7 @@ namespaces.
 
     bdda:place_beirut a crm:E53_Place, geosparql:Feature ;
 		  rdfs:label "Beirut" ;
-		  crm:P87_is_identified_by toponym:370 ;
+		  crm:P1_is_identified_by toponym:370 ;
 		  crmgeo:Q11i_is_approximated_by [
 			 a crmgeo:SP6_Declarative_Place;
 			 crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
