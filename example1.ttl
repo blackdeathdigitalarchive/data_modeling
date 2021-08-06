@@ -1,16 +1,23 @@
-@prefix account: <http://bdda.org/accounts> .
-@prefix mss: <http://bdda.org/manuscripts> .
+@prefix account: <http://bdda.org/accounts/> .
+@prefix toponym: <http://bdda.org/toponyms/> .
+@prefix place: <http://bdda.org/places/> .
+@prefix event: <http://bdda.org/events/> .
+@prefix mss: <http://bdda.org/manuscripts/> .
 @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
-@prefix crmgeo: <foo> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix crmgeo: <http://www.ics.forth.gr/isl/CRMgeo/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix aat: <http://vocab.getty.edu/page/aat/> .
+@prefix ogcgs: <http://www.opengis.net/ont/geosparql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema> .
 
 account:1829 a crm:E31_Document ;
 	      rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
-	     rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]."@en .
+	     rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]"@en .
 
 mss:mss_1 a crm:E73_Information_Object ;
-	  rdf:label "collection TS.MA.e; folder/doc 970/80" ;
+	  rdfs:label "collection TS.MA.e; folder/doc 970/80" ;
 	  crm:P128_carries account:1829 .
 
 toponym:370 a crm:E41_Appellation ;
@@ -21,7 +28,7 @@ toponym:370 a crm:E41_Appellation ;
 	      rdfs:label "Beirut" ;
 	      crm:P2_has_type aat:300008389 . # not the right designation; fix.
 
-bdda:place_beirut a crm:E53_Place, geosparql:Feature ;
+place:place_beirut a crm:E53_Place, ogcgs:Feature ;
 	      rdfs:label "Beirut" ;
 	      crm:P87_is_identified_by toponym:370 ;
 	      crmgeo:Q11i_is_approximated_by [
@@ -36,8 +43,8 @@ account:1829 crm:P67_refers_to [ a crm:E53_Place ;
 account:1829 crm:P70_documents event:01 .
 
 event:01 a crm:E5_Event ;
-	 rdf:label "a case of plague reported in Beirut" ;
-	 crm:P2_has_type "plague occurance" .
-	 crm:P7_took_place_at bdda:place_beirut ;
-         crm:P4_has_time-span [ a E52_Time-Span ;
+	 rdfs:label "a case of plague reported in Beirut" ;
+	 crm:P2_has_type "plague occurance" ;
+	 crm:P7_took_place_at place:place_beirut ;
+         crm:P4_has_time-span [ a crm:E52_Time-Span ;
 	 		        crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime ] .
