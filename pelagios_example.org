@@ -1,0 +1,237 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: An Example Encoding of BDDA Data
+#+date: <2021-09-10 Fri>
+#+author: Clifford E. Wulfman
+#+email: cwulfman@princeton.edu
+
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
+* Introduction
+  The Black Death Digital Archive project aims to support researchers
+  of the Second Plague Pandemic by systematically compiling the
+  enormous body of evidence, published and unpublished, documentary
+  and material, into a knowledge base that can serve as a gateway to
+  future research.
+
+  The first body of evidence compiled by the BDDA comes from the
+  Ottoman archives.  The data was collected by Nükhet Varlık, Ece
+  Turnator, and Mesut Sayan using AirTable and consists
+  primarily of extracts and summaries from archival documents in which
+  plague is mentioned in some way.
+
+  Here is a sample; some unused fields have been removed for simplicity.
+
+  | Number |   ID | Date_Modern | Place Name | Summary                                                                                                 |
+  |--------+------+-------------+------------+---------------------------------------------------------------------------------------------------------|
+  |   1682 | 1829 |  1906-11-21 | Beruit     | Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]. |
+
+
+|   id | place name | PossibleOtherPlaces | title (from Places) | COLLECTION  | FOLDER/DOC | TRANSLITERATION | Date_Modern (YYYY-MM-DD) | Date_Document | SUBJECT | EXISTENCE   | PRECAUTIONS | DEATH NUMBER | SUMMARY                                                                           | NUMBER OF IMAGES | DROPBOX LINK | FULL TEXT | NOTES |
+|------+------------+---------------------+---------------------+-------------+------------+-----------------+--------------------------+---------------+---------+-------------+-------------+--------------+-----------------------------------------------------------------------------------+------------------+--------------+-----------+-------|
+| 1829 | Beyrut     |                     |                     | A.)MKT.MHM. | 590/5      |                 |               1906-11-21 | 4 SEVVAL 1324 | PLAGUE  | UNCONFIRMED |             | Yes          | Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair |                  |              |           |       |
+
+
+  We're going to follow a commonly employed practice and create some
+  prefixes for our objects.  In RDF, everything must have an IRI (a
+  kind of URL), and, for linked-open-data projects, all the IRIs
+  should be actual URIs that point to actual resources on the Web.  In
+  practice, that means contriving a namespace governed by a domain you
+  control, with URLs that resolve to documents or resources in that
+  domain.  We'll finesse this for now, and assume our base URI is
+  http://bdda.org
+
+* Documenting Evidence
+
+  The Turkish table contains information about various sorts of
+  documentary evidence recorded in documents in the Turkish archives.
+  Evidentiary statements are modeled as /E31_Document/ objects in CRM:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+    account:1829 rdf:type crm:E31_Document .
+  #+end_src
+
+  We will record the actual text of the evidence, or of the summary,
+  as one or more /rdf:values/, allowing us to capture the original
+  language and the translation:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    account:1829 rdf:type crm:E31_Document ;
+	       rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
+	       rdf:value "Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]."@en .
+  #+end_src
+
+  The manuscript or paper record on which the account is transcribed
+  is, in CRM, an /E73_Information_Object/, and for our purposes we can
+  record a bibliographic reference as a simple label.
+
+  #+begin_src n3
+    mss:mss_1 a crm:Information_Object ;
+	      rdf:label "collection TS.MA.e; folder/doc 970/80" .
+  #+end_src
+
+* Events in Space and Time
+  What is more relevant, however, are the places mentioned in the
+  evidence and the time periods to which the evidence refers.  We want
+  to be able to answer questions like "What happened?  Where?  When?"
+  The /what/ is complicated, and I'm going to leave that for the next
+  section.  But describing events that occur in space and time is one
+  of the primary strengths of CRM, and there are very nuanced things
+  you can say with it.  The CRMgeo extention was developed to align
+  CRM concepts explicitly with geoSPARQL.
+
+  CRM uses the notion of a space-time volume to describe an event as
+  something that occurred at a particular location at a particular
+  point or period in time with a number of properties: its location
+  (its projection in space) and its time-span (when and for how long
+  this particular designation obtained):
+
+  #+begin_src n3
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix geo: <http://www.opengis.net/ont/geosparql#> .
+
+      event:1 a E5_Event ;
+	  p7_took_place_at bdda:place1 .
+	  crm:P4_has_time-span [ a E52_Time-Span ;
+				    crm:P82b_begin_of_the_end "1901-05-24"^^xsd:dateTime .] .
+
+      bdda:place1 a E53_Place, geosparql:Feature ;
+	      rdfs:label "Beirut" ;
+	      Q11i_is_approximated_by [
+	     a crmgeo:SP6_Declarative_Place;
+	     crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+	  ] .
+
+    toponym:370 a crm:E41_Appellation ;
+		crm:P190_has_symbolic_content "Beyrut"@tr ;
+		crm:P1_is_identified_by "Beyrut"@tr ;
+		rdfs:label "Beyrut" ;
+		rdfs:label "Beirut" .
+
+    bdda:place1 P87_is_identified_by toponym:370 .
+  #+end_src
+
+  There are lots of things to unpack here.  First note the use of the
+  property /rdf:label/; this property is almost universally employed
+  in linked-data applications to provide a convenient handle for
+  particular instances.  The label should be used for convenience
+  only; it is not part of the model and is not a substitute for the
+  place name (we'll get to that in a minute).
+
+  The CRMgeo ontology defines two kinds of places: phenomenal places
+  -- the places that actually exist in the world -- and declarative
+  places: those abstract places defined by coordinates.  The property
+  /Q10i_is_defined_by/ can refer to a string that represents
+  coordinates in any system; applications commonly use the datatypes
+  defined by geoSPARQL, because these can readily be used by programs
+  that project points or polygonal regions onto a map.  Here we are
+  using a popular format, WKT, or [[https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry][Well-Known Text]], to describe the
+  location of Beirut.  A spaceime volume can have many spatial
+  projections of varying degrees of complexity; here we are using a
+  simple longitude-latitude point, as recorded in the Turkish table.
+
+  The specificity of the date recorded in the Turkish table
+  (1906-11-21) lets us establish a clear outer time bound for the
+  event we're interested in -- the occurance of plague in Beirut --
+  because the occurance could not have started after the report was
+  filed. It might have been ongoing at the time of the report,
+  however, so we cannot say with precision exactly when the plague
+  event ended.  CRM has a set of predicates that enable the expression
+  of temporal fuzziness:
+
+  #+begin_src n3
+    :time-span crm:end_of_the_begin "1906-11-21"^^xsd:dateTime .
+  #+end_src
+
+  says that the event could not have started after the report date.
+
+  The summary provides no information on the inner bound of the
+  time-span.  Did the observation take place a week before the report?
+  A day?  A month?  Further research would have to be done.
+
+  This spatio-temporal envelope incompassing the occurance of plague
+  is an abstraction, but the report gives it a name: /Beyrut/.  CRM
+  allows us to express this naming with the /E41_Appellation/ class:
+
+  #+begin_src n3
+  toponym:370 a crm:E41_Appellation ;
+	      rdfs:label "Beyrut" ;
+	      crm:P190_has_symbolic_content "Beyrut"@tr ;
+	      crm:P1_is_identified_by "Beyrut"@tr .
+  #+end_src
+
+  Putting it all together, we can derive the following CRM assertions
+  automatically from the Turkish table entry:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix mss: <http://bdda.org/manuscripts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+    mss:1829 a crm:E73_Information_Object ;
+	rdfs:label "A.)MKT.MHM., 590/5" ;
+	crm:P128_carries account:1829 .
+
+    toponym:beyrut a crm:E41_Appellation ;
+		  rdfs:label "Beyrut" ;
+		  crm:P1_is_identified_by "Beyrut"@tr ;
+
+    account:1829 a crm:E31_Document ;
+		 rdf:value "Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair"@tr ;
+		 rdf:value "A patient in Beirut has been diagnosed with symptoms of the plague"@en ;
+		 crm:P67_refers_to [ a crm:E53_Place ;
+			 crm:P87_is_identified_by toponym:beyrut ] ;
+  #+end_src
+
+
+  The composability of RDF makes it possible to augment this
+  "translation" with additional information derived from human analysis:
+
+  #+begin_src n3
+    @prefix account: <http://bdda.org/accounts> .
+    @prefix mss: <http://bdda.org/manuscripts> .
+    @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+    @prefix crmgeo: <foo/> .
+    @prefix geosparq: <bar/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix aat: <http://vocab.getty.edu/page/aat/> .
+
+    toponym:beyrut a crm:E41_Appellation ;
+		  crm:P190_has_symbolic_content "Beyrut"@tr ;
+		  crm:P1_is_identified_by "Beirut"@en .
+
+    bdda:place_beirut a geosparql:feature ;
+		      rdfs:label "Beirut" ;
+		      crm:P1_is_identified_by toponym:beyrut ;
+		      crm:P2_has_type aat:00000000 ;
+		      crmgeo:Q11i_is_approximated_by [
+			 a crmgeo:SP6_Declarative_Place;
+			 crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
+			 ] .
+
+    account:1829 crm:P70_documents event:01 .
+
+    event:01 a crm:E5_Event ;
+	     rdf:label "a case of plague reported in Beirut" ;
+	     crm:P2_has_type "plague occurance" .
+	     crm:P7_took_place_at bdda:place_beirut ;
+	     crm:P4_has_time-span [ a E52_Time-Span ;
+				    crm:P82b_begin_of_the_end "1906-11-21"^^xsd:dateTime ] .
+  #+end_src
+
+  Note that the event is documented as having taken place at an actual
+  place, which has been associated with the toponym used in the 
