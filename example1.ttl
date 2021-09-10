@@ -25,12 +25,13 @@ toponym:370 a crm:E41_Appellation ;
 	      crm:P1_is_identified_by "Beyrut"@tr ;
 	      crm:P1_is_identified_by "Beirut"@en ;
 	      rdfs:label "Beyrut" ;
-	      rdfs:label "Beirut" ;
-	      crm:P2_has_type aat:300008389 . # not the right designation; fix.
+	      rdfs:label "Beirut" .
+
 
 place:place_beirut a crm:E53_Place, ogcgs:Feature ;
 	      rdfs:label "Beirut" ;
 	      crm:P87_is_identified_by toponym:370 ;
+	      crm:P2_has_type aat:300008389 ; # not the right designation; fix.
 	      crmgeo:Q11i_is_approximated_by [
 	      	     a crmgeo:SP6_Declarative_Place;
 		     crmgeo:Q10i_is_defined_by "POINT (35.51306 33.886944)"^^geo:wktLiteral 
