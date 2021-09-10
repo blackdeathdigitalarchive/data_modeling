@@ -25,16 +25,12 @@
   primarily of extracts and summaries from archival documents in which
   plague is mentioned in some way.
 
-  Here is a sample; some unused fields have been removed for simplicity.
-
-  | Number |   ID | Date_Modern | Place Name | Summary                                                                                                 |
-  |--------+------+-------------+------------+---------------------------------------------------------------------------------------------------------|
-  |   1682 | 1829 |  1906-11-21 | Beruit     | Report on the observance of the plague in a patient in Beirut, as well as the measures taken [against]. |
+  Here is a sample; some fields have been removed for simplicity.
 
 
-|   id | place name | PossibleOtherPlaces | title (from Places) | COLLECTION  | FOLDER/DOC | TRANSLITERATION | Date_Modern (YYYY-MM-DD) | Date_Document | SUBJECT | EXISTENCE   | PRECAUTIONS | DEATH NUMBER | SUMMARY                                                                           | NUMBER OF IMAGES | DROPBOX LINK | FULL TEXT | NOTES |
-|------+------------+---------------------+---------------------+-------------+------------+-----------------+--------------------------+---------------+---------+-------------+-------------+--------------+-----------------------------------------------------------------------------------+------------------+--------------+-----------+-------|
-| 1829 | Beyrut     |                     |                     | A.)MKT.MHM. | 590/5      |                 |               1906-11-21 | 4 SEVVAL 1324 | PLAGUE  | UNCONFIRMED |             | Yes          | Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair |                  |              |           |       |
+|   id | place name | COLLECTION  | FOLDER/DOC | Date_Modern (YYYY-MM-DD) | Date_Document | SUBJECT | SUMMARY                                                                           |
+|------+------------+-------------+------------+--------------------------+---------------+---------+-----------------------------------------------------------------------------------|
+| 1829 | Beyrut     | A.)MKT.MHM. | 590/5      |               1906-11-21 | 4 SEVVAL 1324 | PLAGUE  | Beyrut'da bir hastada veba belirtilerinin görüldügüne ve yapılan çalısmalara dair |
 
 
   We're going to follow a commonly employed practice and create some
@@ -234,4 +230,4 @@
   #+end_src
 
   Note that the event is documented as having taken place at an actual
-  place, which has been associated with the toponym used in the 
+  place, which has been associated with the toponym used in the account.
