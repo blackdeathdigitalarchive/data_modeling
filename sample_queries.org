@@ -1,0 +1,127 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: Some Sample BDDA Queries
+#+date: <2021-10-05 Tue>
+#+author: Clifford E. Wulfman
+#+email: cwulfman@princeton.edu
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
+* Introduction
+  Now that we have a model for our data, let's see what that model
+  lets us discover in our data.
+
+  This quick exploration assumes familiarity with SPARQL and the
+  general notions of RDF.
+
+  The BDDA Airtable database documents mentions of plague in the
+  Turkish archives.  Let's begin by retrieving the specific plague
+  events that have been documented:
+
+  #+begin_src n3
+    prefix ecrm: <http://erlangen-crm.org/200717/>
+    prefix event: <http://bdda.org/events/>
+
+    SELECT ?event ?datestring WHERE {
+	?event a ecrm:E5_Event .
+	?event ecrm:has_type "plague occurance" .
+	optional { ?event ecrm:P4_has_time-span ?span }
+	optional { ?span ecrm:P82b_begin_of_the_end ?datestring}
+    }
+  #+end_src
+
+  SPARQL returns a table of 1,497 documented plague events, along with
+  the dates associated with them.[fn:1]  Let's restrict
+  our inquiry to events that were reported as occurring in the 16th
+  century:
+
+  #+begin_src n3
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix ecrm: <http://erlangen-crm.org/200717/>
+    prefix toponym: <http://bdda.org/toponyms/>
+    prefix event: <http://bdda.org/events/>
+
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?event ?datestring WHERE {
+	?event a ecrm:E5_Event .
+	?event ecrm:has_type "plague occurance" .
+	optional { ?event ecrm:P4_has_time-span ?span }
+	optional { ?span ecrm:P82b_begin_of_the_end ?datestring}
+	FILTER (?datestring > "1499-12-31"^^xsd:date)
+	FILTER (?datestring < "1600-01-01"^^xsd:date)
+    }
+  #+end_src
+
+  We've now restricted our inquiry to 41 reported events. Our table,
+  however, doesn't yet say much about these events.
+
+  Let's see the context of the report from the dataset.  The account
+  itself is just another knowledge object; what we'd like to see is
+  the text of the account.
+
+  #+begin_src n3
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix ecrm: <http://erlangen-crm.org/200717/>
+    prefix toponym: <http://bdda.org/toponyms/>
+    prefix event: <http://bdda.org/events/>
+
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?event ?datestring ?txt WHERE {
+	?event a ecrm:E5_Event .
+	?event ecrm:has_type "plague occurance" .
+	optional { ?event ecrm:P4_has_time-span ?span }
+	optional { ?span ecrm:P82b_begin_of_the_end ?datestring}
+	?account ecrm:P70_documents ?event .
+	?account rdf:value ?txt .
+	FILTER (?datestring > "1499-12-31"^^xsd:date)
+	FILTER (?datestring < "1600-01-01"^^xsd:date)
+    }
+  #+end_src
+
+  We'd also like to know where the reports say these events occurred
+  -- or, more accurately, what place names are mentioned in the
+  context of the report of an occurance.  That's all we can reliably
+  infer from the data we are given.
+
+  #+begin_src n3
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix ecrm: <http://erlangen-crm.org/200717/>
+    prefix toponym: <http://bdda.org/toponyms/>
+    prefix event: <http://bdda.org/events/>
+
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT ?event ?datestring ?placename ?txt WHERE {
+	?event a ecrm:E5_Event .
+	?event ecrm:has_type "plague occurance" .
+	optional { ?event ecrm:P4_has_time-span ?span }
+	optional { ?span ecrm:P82b_begin_of_the_end ?datestring}
+	?account ecrm:P70_documents ?event .
+	?account rdf:value ?txt .
+	    ?event ecrm:P7_took_place_at ?place .
+	?place ecrm:P87_is_identified_by ?toponym .
+	?toponym rdfs:label ?placename .
+	FILTER (?datestring > "1499-12-31"^^xsd:date)
+	FILTER (?datestring < "1600-01-01"^^xsd:date)
+    }
+  #+end_src
+
+  Now, as it happens, the researchers have associated these toponyms
+  with actual places.  A few inference rules would let us associate
+  the anonymous places from the accounts with specific places, but we
+  will do the same work by retrieving the places that are identified
+  by the toponyms
+  
+
+* Footnotes
+
+[fn:1] We say "dates associated with them"
+  because our model's representation of event occurances is nuanced.
+  the database provided a single, fixed date, derived from some
+  context we do not have; the best we can say is that the event being
+  described could not have occurred after the date of the account.  A more
+  complete data set would provide a temporal range.
